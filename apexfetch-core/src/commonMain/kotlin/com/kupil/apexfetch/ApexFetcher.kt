@@ -7,6 +7,7 @@
 
 package com.kupil.apexfetch
 
+import com.kupil.apexfetch.db.ApexDatabase
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.header
@@ -19,6 +20,8 @@ import io.ktor.utils.io.ByteReadChannel
 import io.ktor.utils.io.core.isEmpty
 import io.ktor.utils.io.core.readBytes
 import io.ktor.utils.io.readRemaining
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.io.readByteArray
@@ -27,15 +30,31 @@ import okio.Path
 import okio.buffer
 
 class ApexFetcher(
+  private val database: ApexDatabase,
   private val client: HttpClient = HttpClientFactory.create(),
-  private val fileSystem: FileSystem = FileSystem.SYSTEM
+  private val fileSystem: FileSystem = FileSystem.SYSTEM,
 ) {
 
+  private val queries = database.downloadHistoryQueries
+  private val activeJobs = mutableMapOf<String, Job>()
+
   fun download(url: String, destinationPath: Path): Flow<DownloadState> = flow {
+    currentCoroutineContext()[Job]?.let { activeJobs[url] = it }
     emit(DownloadState.Connecting)
 
     try {
-      // 1. Cek apakah file sudah ada sebelumnya (untuk fitur Resume)
+      val fileName = destinationPath.name
+      val savedPath = destinationPath.toString()
+      queries.insertOrReplace(
+        id = null,
+        url = url,
+        fileName = fileName,
+        savedPath = savedPath,
+        totalBytes = 0L,
+        status = DownloadStatus.CONNECTING,
+        timestamp = getCurrentTimeMillis()
+      )
+
       val isResume = fileSystem.exists(destinationPath)
       val downloadedBytes = if (isResume) {
         fileSystem.metadata(destinationPath).size ?: 0L
@@ -43,7 +62,6 @@ class ApexFetcher(
         0L
       }
 
-      // 2. Siapkan Request dengan header 'Range' jika melanjutkan unduhan
       client.prepareGet(url) {
         if (downloadedBytes > 0) {
           header(HttpHeaders.Range, "bytes=$downloadedBytes-")
@@ -51,25 +69,42 @@ class ApexFetcher(
       }.execute { response: HttpResponse ->
 
         if (!response.status.isSuccess()) {
+          queries.insertOrReplace(
+            id = null,
+            url = url,
+            fileName = fileName,
+            savedPath = savedPath,
+            totalBytes = 0L,
+            status = DownloadStatus.FAILED,
+            timestamp = getCurrentTimeMillis()
+          )
           emit(DownloadState.Error(Exception("HTTP Error: ${response.status}")))
           return@execute
         }
 
-        // 3. Hitung total bytes (yang sudah ada + yang akan diunduh)
         val contentLength = response.contentLength() ?: -1L
         val totalBytes = if (contentLength != -1L) downloadedBytes + contentLength else -1L
         var currentBytes = downloadedBytes
-
+        queries.insertOrReplace(
+          id = null,
+          url = url,
+          fileName = fileName,
+          savedPath = savedPath,
+          totalBytes = totalBytes,
+          status = DownloadStatus.DOWNLOADING,
+          timestamp = getCurrentTimeMillis()
+        )
         val channel: ByteReadChannel = response.body()
-
-        val sinkMode = if (isResume) fileSystem.appendingSink(destinationPath) else fileSystem.sink(destinationPath)
-
+        val sinkMode = if (isResume) fileSystem.appendingSink(destinationPath) else fileSystem.sink(
+          destinationPath
+        )
         sinkMode.buffer().use { sink ->
           while (!channel.isClosedForRead) {
             val packet = channel.readRemaining(DEFAULT_BUFFER_SIZE.toLong())
             while (!packet.exhausted()) {
               val bytes = packet.readByteArray()
               sink.write(bytes)
+
               currentBytes += bytes.size
               val progress = if (totalBytes > 0) {
                 ((currentBytes.toDouble() / totalBytes) * 100).toInt()
@@ -81,11 +116,52 @@ class ApexFetcher(
             }
           }
         }
+        queries.insertOrReplace(
+          id = null,
+          url = url,
+          fileName = fileName,
+          savedPath = savedPath,
+          totalBytes = totalBytes,
+          status = DownloadStatus.SUCCESS,
+          timestamp = getCurrentTimeMillis()
+        )
 
-        emit(DownloadState.Success(destinationPath.toString()))
+        emit(DownloadState.Success(savedPath))
       }
     } catch (e: Exception) {
+      queries.insertOrReplace(
+        id = null,
+        url = url,
+        fileName = destinationPath.name,
+        savedPath = destinationPath.toString(),
+        totalBytes = 0L,
+        status = DownloadStatus.FAILED,
+        timestamp = getCurrentTimeMillis()
+      )
       emit(DownloadState.Error(e))
+    } finally {
+      activeJobs.remove(url)
+    }
+  }
+
+  fun pause(url: String) {
+    activeJobs[url]?.cancel()
+    queries.updateStatusByUrl(DownloadStatus.PAUSED, url)
+  }
+
+  fun pauseAll() {
+    activeJobs.keys.toList().forEach { url -> pause(url) }
+  }
+
+  fun cancel(url: String, destinationPath: Path) {
+    activeJobs[url]?.cancel()
+    queries.updateStatusByUrl(DownloadStatus.CANCELED, url)
+    if (fileSystem.exists(destinationPath)) fileSystem.delete(destinationPath)
+  }
+
+  fun cancelAll(paths: Map<String, Path>) {
+    activeJobs.keys.toList().forEach { url ->
+      paths[url]?.let { cancel(url, it) }
     }
   }
 }

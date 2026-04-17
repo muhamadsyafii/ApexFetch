@@ -21,12 +21,11 @@ import kotlinx.coroutines.launch
 import okio.Path.Companion.toPath
 
 @Composable
-fun App() {
+fun App(fetcher: ApexFetcher) {
     MaterialTheme {
         var url by remember { mutableStateOf("https://nbg1-speed.hetzner.com/100MB.bin") }
         var downloadState by remember { mutableStateOf<DownloadState>(DownloadState.Idle) }
         val coroutineScope = rememberCoroutineScope()
-        val fetcher = remember { ApexFetcher() }
 
         Column(
             modifier = Modifier.fillMaxSize().padding(16.dp),
