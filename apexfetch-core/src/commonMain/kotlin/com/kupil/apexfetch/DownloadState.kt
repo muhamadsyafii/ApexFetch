@@ -10,7 +10,10 @@ package com.kupil.apexfetch
 sealed class DownloadState {
   object Idle : DownloadState()
   object Connecting : DownloadState()
-  data class Downloading(val progress: Int, val downloadedBytes: Long, val totalBytes: Long) : DownloadState()
+  data class Downloading(
+    val progress: Int,
+    val downloadedBytes: Long,
+    val totalBytes: Long) : DownloadState()
   data class Success(val filePath: String) : DownloadState()
   data class Error(val exception: Throwable) : DownloadState()
 }

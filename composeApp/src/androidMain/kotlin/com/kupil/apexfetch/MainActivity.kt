@@ -13,9 +13,16 @@ class MainActivity : ComponentActivity() {
         val driver = DriverFactory(applicationContext).createDriver()
         val database = ApexDatabase(driver)
         val fetcher = ApexFetcher(database)
+        val downloadPath = applicationContext.filesDir.absolutePath
+
 
         setContent {
-            App(fetcher = fetcher)
+
+            App(
+                fetcher = fetcher,
+                basePath = downloadPath
+
+            )
         }
     }
 }
