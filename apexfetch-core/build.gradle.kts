@@ -1,6 +1,7 @@
 plugins {
   alias(libs.plugins.kotlinMultiplatform)
   alias(libs.plugins.androidLibrary)
+  alias(libs.plugins.sqldelight)
 }
 
 kotlin {
@@ -13,24 +14,36 @@ kotlin {
     languageSettings.optIn("kotlin.ExperimentalMultiplatform")
   }
 
+  targets.all {
+    compilations.all {
+      kotlinOptions {
+        freeCompilerArgs = freeCompilerArgs + "-Xexpect-actual-classes"
+      }
+    }
+  }
+
   sourceSets {
     val commonMain by getting {
       dependencies {
         implementation(libs.kotlinx.coroutines.core)
         implementation(libs.ktor.client.core)
         api(libs.okio)
+
+        implementation(libs.sqldelight.coroutines)
       }
     }
 
     val androidMain by getting {
       dependencies {
         implementation(libs.ktor.client.android)
+        implementation(libs.sqldelight.android)
       }
     }
 
     val jvmMain by getting {
       dependencies {
         implementation(libs.ktor.client.cio)
+        implementation(libs.sqldelight.jvm)
       }
     }
   }
@@ -47,5 +60,14 @@ android {
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
+  }
+}
+
+sqldelight {
+  databases {
+    create("ApexDatabase") {
+      // Sesuaikan packageName ini dengan struktur folder tempat kamu menaruh file .sq
+      packageName.set("com.kupil.apexfetch.db")
+    }
   }
 }

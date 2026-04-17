@@ -1,8 +1,8 @@
 [versions]
 agp = "8.11.2"
-android-compileSdk = "36" # Diturunkan ke 34 untuk stabilitas library
-android-minSdk = "24"     # Diturunkan ke 21 agar mendukung perangkat lama
-android-targetSdk = "36"  # Diturunkan mengikuti compileSdk
+android-compileSdk = "36"
+android-minSdk = "24"
+android-targetSdk = "36"
 
 androidx-activity = "1.13.0"
 androidx-appcompat = "1.7.1"
@@ -17,9 +17,10 @@ kotlin = "2.3.20"
 kotlinx-coroutines = "1.10.2"
 material3 = "1.10.0-alpha05"
 
-# --- TAMBAHAN UNTUK APEXFETCH CORE ---
+# --- APEXFETCH CORE ---
 ktor = "3.0.0"
 okio = "3.9.0"
+sqldelight = "2.0.1"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -41,7 +42,12 @@ compose-components-resources = { module = "org.jetbrains.compose.components:comp
 compose-uiToolingPreview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "composeMultiplatform" }
 kotlinx-coroutinesSwing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
 
-# --- TAMBAHAN UNTUK APEXFETCH CORE ---
+# SQLDelight
+sqldelight-android = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
+sqldelight-jvm = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqldelight" }
+sqldelight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
+
+# --- APEXFETCH CORE ---
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }
@@ -55,3 +61,4 @@ composeHotReload = { id = "org.jetbrains.compose.hot-reload", version.ref = "com
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
