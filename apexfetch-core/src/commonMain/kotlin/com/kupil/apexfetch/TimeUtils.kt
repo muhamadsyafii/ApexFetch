@@ -7,4 +7,6 @@
 
 package com.kupil.apexfetch
 
+
 expect fun getCurrentTimeMillis(): Long
+expect fun formatTimestamp(timestamp: Long): String

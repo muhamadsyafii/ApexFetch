@@ -6,5 +6,12 @@
  */
 
 package com.kupil.apexfetch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 actual fun getCurrentTimeMillis(): Long = System.currentTimeMillis()
+actual fun formatTimestamp(timestamp: Long): String {
+  val formatter = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault())
+  return formatter.format(Date(timestamp))
+}

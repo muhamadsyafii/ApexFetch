@@ -12,8 +12,12 @@ fun main() = application {
         val driver = DriverFactory().createDriver()
         val database = ApexDatabase(driver)
         val fetcher = ApexFetcher(database)
+        val downloadPath = System.getProperty("user.home") + "/Downloads"
 
         // Masukkan ke App
-        App(fetcher = fetcher)
+        App(
+            fetcher = fetcher,
+            basePath = downloadPath
+        )
     }
 }

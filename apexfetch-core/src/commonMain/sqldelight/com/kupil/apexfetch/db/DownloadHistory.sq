@@ -1,6 +1,6 @@
 CREATE TABLE DownloadHistoryEntity (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    url TEXT NOT NULL,
+    url TEXT NOT NULL UNIQUE,
     fileName TEXT NOT NULL,
     savedPath TEXT NOT NULL,
     totalBytes INTEGER NOT NULL,

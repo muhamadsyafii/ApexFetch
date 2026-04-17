@@ -27,6 +27,8 @@ kotlin {
       dependencies {
         implementation(libs.kotlinx.coroutines.core)
         implementation(libs.ktor.client.core)
+        implementation(libs.ktor.client.logging)
+        implementation(libs.ktor.client.okhttp)
         api(libs.okio)
 
         implementation(libs.sqldelight.coroutines)
