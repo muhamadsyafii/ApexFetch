@@ -26,7 +26,7 @@ kotlin {
     val commonMain by getting {
       dependencies {
         implementation(libs.kotlinx.coroutines.core)
-        implementation(libs.ktor.client.core)
+        api(libs.ktor.client.core)
         implementation(libs.ktor.client.logging)
         implementation(libs.ktor.client.okhttp)
         api(libs.okio)
