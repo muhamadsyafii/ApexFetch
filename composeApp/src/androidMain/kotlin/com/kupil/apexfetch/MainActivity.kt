@@ -5,6 +5,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import com.kupil.apexfetch.core.ApexFetcher
+import com.kupil.apexfetch.database.DriverFactory
 import com.kupil.apexfetch.db.ApexDatabase
 
 class MainActivity : ComponentActivity() {

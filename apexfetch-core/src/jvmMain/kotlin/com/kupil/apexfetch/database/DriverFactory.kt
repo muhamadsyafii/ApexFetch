@@ -1,11 +1,11 @@
 /*
  * Created by Muhamad Syafii
- * 17/4/2026 - muhamadsyafii4@gmail.com
+ * 21/4/2026 - muhamadsyafii4@gmail.com
  * Copyright (c) 2026.
  * All Rights Reserved
  */
 
-package com.kupil.apexfetch
+package com.kupil.apexfetch.database
 
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
@@ -18,7 +18,7 @@ actual class DriverFactory {
     val dbFile = File(databaseName)
     val driver: SqlDriver = JdbcSqliteDriver("jdbc:sqlite:${dbFile.absolutePath}")
     if (!dbFile.exists()) {
-      ApexDatabase.Schema.create(driver)
+      ApexDatabase.Companion.Schema.create(driver)
     }
     return driver
   }
