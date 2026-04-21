@@ -19,7 +19,8 @@ fun main() = application {
         // Masukkan ke App
         App(
             fetcher = fetcher,
-            basePath = downloadPath
+            basePath = downloadPath,
+            namePlatform = "Desktop Platform"
         )
     }
 }

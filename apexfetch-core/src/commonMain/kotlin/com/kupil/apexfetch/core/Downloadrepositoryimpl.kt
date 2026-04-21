@@ -40,6 +40,7 @@ internal class DownloadRepositoryImpl(
       fileName = fileName,
       savedPath = savedPath,
       totalBytes = existing?.totalBytes ?: existingTotalBytes,
+      downloadedBytes = existing?.downloadedBytes ?: 0L,
       status = DownloadStatus.CONNECTING,
       timestamp = getCurrentTimeMillis()
     )
@@ -57,6 +58,7 @@ internal class DownloadRepositoryImpl(
     fileName: String,
     savedPath: String,
     totalBytes: Long,
+    downloadedBytes: Long,
     status: String
   ) {
     queries.insertOrReplace(
@@ -65,6 +67,7 @@ internal class DownloadRepositoryImpl(
       fileName = fileName,
       savedPath = savedPath,
       totalBytes = totalBytes,
+      downloadedBytes = downloadedBytes,
       status = status,
       timestamp = getCurrentTimeMillis()
     )
