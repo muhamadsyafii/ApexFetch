@@ -34,3 +34,5 @@ plugins {
 
 include(":composeApp")
 include(":apexfetch-core")
+include(":apexfetch-compose")
+include(":apexfetch-android-xml")
