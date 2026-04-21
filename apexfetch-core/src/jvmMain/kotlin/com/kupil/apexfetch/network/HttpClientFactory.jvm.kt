@@ -5,7 +5,7 @@
  * All Rights Reserved
  */
 
-package com.kupil.apexfetch
+package com.kupil.apexfetch.network
 
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO

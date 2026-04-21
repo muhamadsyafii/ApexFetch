@@ -5,7 +5,7 @@
  * All Rights Reserved
  */
 
-package com.kupil.apexfetch
+package com.kupil.apexfetch.util
 
 
 expect fun getCurrentTimeMillis(): Long

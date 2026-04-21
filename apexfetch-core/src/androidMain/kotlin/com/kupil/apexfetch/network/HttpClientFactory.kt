@@ -1,15 +1,15 @@
 /*
  * Created by Muhamad Syafii
- * 17/4/2026 - muhamadsyafii4@gmail.com
+ * 21/4/2026 - muhamadsyafii4@gmail.com
  * Copyright (c) 2026.
  * All Rights Reserved
  */
 
-package com.kupil.apexfetch
+package com.kupil.apexfetch.network
 
 import io.ktor.client.HttpClient
-import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.engine.okhttp.OkHttp
+import io.ktor.client.plugins.HttpTimeout
 
 actual object HttpClientFactory {
   actual fun create(): HttpClient = HttpClient(OkHttp) {
