@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -59,7 +60,13 @@ import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun App(fetcher: ApexFetcher, basePath: String) {
+fun App(
+  fetcher: ApexFetcher,
+  basePath: String,
+  namePlatform : String,
+  onNavigateToXml: (() -> Unit)? = null,
+  onNavigateToNativeCompose: (() -> Unit)? = null
+) {
   MaterialTheme {
     val scope = rememberCoroutineScope()
     var urlInput by remember { mutableStateOf("https://nbg1-speed.hetzner.com/100MB.bin") }
@@ -77,8 +84,32 @@ fun App(fetcher: ApexFetcher, basePath: String) {
       }
     ) { padding ->
       Column(modifier = Modifier.padding(padding).padding(16.dp).fillMaxSize()) {
+
+        if (onNavigateToXml != null && onNavigateToNativeCompose != null) {
+          Row(
+            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+          ) {
+            Button(
+              onClick = onNavigateToNativeCompose,
+              modifier = Modifier.weight(1f),
+              colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
+            ) {
+              Text("➡️ Native Compose")
+            }
+            Button(
+              onClick = onNavigateToXml,
+              modifier = Modifier.weight(1f),
+              colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary)
+            ) {
+              Text("➡️ XML View")
+            }
+          }
+        }
+
+
         Text(
-          "Sample Download File Test",
+          "Sample Download File Test $namePlatform",
           style = MaterialTheme.typography.titleMedium,
           fontWeight = FontWeight.Bold
         )

@@ -11,7 +11,6 @@ import com.kupil.apexfetch.model.DownloadState
 import com.kupil.apexfetch.model.DownloadStatus
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
-import io.ktor.client.plugins.onDownload
 import io.ktor.client.request.header
 import io.ktor.client.request.prepareGet
 import io.ktor.client.statement.HttpResponse
@@ -98,16 +97,19 @@ internal class DownloadExecutorImpl(
         fileName = fileName,
         savedPath = savedPath,
         totalBytes = totalBytes,
+        downloadedBytes = downloadedBytes,
         status = DownloadStatus.DOWNLOADING
       )
 
+      var finalDownloadedBytes = downloadedBytes
       with(diskManager) {
         streamToDisk(
           channel = response.body<ByteReadChannel>(),
           destinationPath = destinationPath,
           isResume = isResume,
           startBytes = downloadedBytes,
-          totalBytes = totalBytes
+          totalBytes = totalBytes,
+          onProgress = { currentBytes -> finalDownloadedBytes = currentBytes }
         )
       }
 
@@ -117,6 +119,7 @@ internal class DownloadExecutorImpl(
         fileName = fileName,
         savedPath = savedPath,
         totalBytes = totalBytes,
+        downloadedBytes = finalDownloadedBytes,
         status = DownloadStatus.SUCCESS
       )
 

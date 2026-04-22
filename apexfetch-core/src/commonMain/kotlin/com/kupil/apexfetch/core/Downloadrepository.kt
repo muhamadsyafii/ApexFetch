@@ -19,7 +19,15 @@ import kotlinx.coroutines.flow.Flow
 internal interface DownloadRepository {
   fun initRecord(url: String, fileName: String, savedPath: String, existingTotalBytes: Long): Long?
   fun updateStatus(url: String, status: String)
-  fun updateRecord(id: Long?, url: String, fileName: String, savedPath: String, totalBytes: Long, status: String)
+  fun updateRecord(
+    id: Long?,
+    url: String,
+    fileName: String,
+    savedPath: String,
+    totalBytes: Long,
+    downloadedBytes: Long,
+    status: String
+  )
   fun getAllHistory(): Flow<List<DownloadHistoryEntity>>
   fun deleteById(id: Long)
   suspend fun getByUrl(url: String): DownloadHistoryEntity?

@@ -1,16 +1,18 @@
 CREATE TABLE DownloadHistoryEntity (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    url TEXT NOT NULL UNIQUE,
-    fileName TEXT NOT NULL,
-    savedPath TEXT NOT NULL,
-    totalBytes INTEGER NOT NULL,
-    status TEXT NOT NULL,
-    timestamp INTEGER NOT NULL
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    url         TEXT    NOT NULL,
+    fileName    TEXT    NOT NULL,
+    savedPath   TEXT    NOT NULL,
+    totalBytes  INTEGER NOT NULL DEFAULT 0,
+    downloadedBytes INTEGER NOT NULL DEFAULT 0,
+    status      TEXT    NOT NULL,
+    timestamp   INTEGER NOT NULL
 );
 
 insertOrReplace:
-INSERT OR REPLACE INTO DownloadHistoryEntity(id, url, fileName, savedPath, totalBytes, status, timestamp)
-VALUES (?, ?, ?, ?, ?, ?, ?);
+INSERT OR REPLACE INTO DownloadHistoryEntity(
+    id, url, fileName, savedPath, totalBytes, downloadedBytes, status, timestamp
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
 
 getAllHistory:
 SELECT * FROM DownloadHistoryEntity ORDER BY timestamp DESC;

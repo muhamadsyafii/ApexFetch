@@ -12,46 +12,77 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import com.kupil.apexfetch.core.ApexFetcher
 import com.kupil.apexfetch.model.DownloadState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import okio.Path
 
 /**
  * A Compose state holder that manages a single download lifecycle.
  *
- * Provides reactive [DownloadUiState] that automatically updates as the download progresses.
- * Cancels the download collection when the composable leaves the composition.
+ * Designed for screens where [url] and [destinationPath] are fixed —
+ * bind them once via [bind], then call [start], [pause], [cancel] freely
+ * from any onClick without needing a coroutine scope at the call site.
  *
  * Usage:
  * ```kotlin
- * val downloadState = rememberDownloadState(fetcher = fetcher)
+ * val controller = rememberDownloadState(fetcher)
+ * controller.bind(url, path)
  *
- * Button(onClick = { downloadState.start(url, path) }) { Text("Download") }
- * LinearProgressIndicator(progress = downloadState.uiState.progress / 100f)
+ * Button(onClick = { controller.start() }) { Text("Download") }
+ * LinearProgressIndicator(progress = controller.uiState.progress / 100f)
  * ```
  *
  * @param fetcher The [ApexFetcher] instance from apexfetch-core.
+ * @param scope The [CoroutineScope] used to launch the download coroutine.
  */
 class DownloadStateHolder(
-  private val fetcher: ApexFetcher
+  private val fetcher: ApexFetcher,
+  private val scope: CoroutineScope
 ) {
   var uiState by mutableStateOf(DownloadUiState())
     private set
 
   private var currentUrl: String? = null
   private var currentPath: Path? = null
+  private var activeJob: Job? = null
 
   /**
-   * Starts or resumes a download.
-   * Call this from a button click or LaunchedEffect.
+   * Binds a [url] and [destinationPath] to this holder.
+   * Call this once before invoking [start].
    */
-  suspend fun start(url: String, destinationPath: Path) {
+  fun bind(url: String, destinationPath: Path) {
     currentUrl = url
     currentPath = destinationPath
-    fetcher.download(url, destinationPath).collect { state ->
-      uiState = DownloadUiState(state)
+  }
+
+  /**
+   * Starts or resumes the download.
+   * Safe to call directly from onClick — launches internally via [scope].
+   * No-op if [bind] has not been called.
+   */
+  fun start() {
+    val url = currentUrl ?: return
+    val path = currentPath ?: return
+    activeJob?.cancel()
+    activeJob = scope.launch {
+      fetcher.download(url, path).collect { state ->
+        uiState = DownloadUiState(state)
+      }
     }
+  }
+
+  /**
+   * Starts or resumes a download with explicit [url] and [destinationPath].
+   * Also updates the bound target for subsequent [pause] and [cancel] calls.
+   */
+  fun start(url: String, destinationPath: Path) {
+    bind(url, destinationPath)
+    start()
   }
 
   /** Pauses the current download. */
@@ -64,6 +95,7 @@ class DownloadStateHolder(
   fun cancel() {
     val url = currentUrl ?: return
     val path = currentPath ?: return
+    activeJob?.cancel()
     fetcher.cancel(url, path)
     uiState = DownloadUiState(DownloadState.Idle)
   }
@@ -72,28 +104,21 @@ class DownloadStateHolder(
 /**
  * Remembers a [DownloadStateHolder] tied to the composition lifecycle.
  *
- * The holder is stable across recompositions as long as [fetcher] doesn't change.
+ * Internally uses [rememberCoroutineScope] so the download coroutine is
+ * automatically cancelled when the composable leaves the composition.
  *
  * @param fetcher The [ApexFetcher] instance. Should be provided via DI (Hilt/Koin).
  */
 @Composable
 fun rememberDownloadState(fetcher: ApexFetcher): DownloadStateHolder {
-  return remember(fetcher) { DownloadStateHolder(fetcher) }
+  val scope = rememberCoroutineScope()
+  return remember(fetcher) { DownloadStateHolder(fetcher, scope) }
 }
 
 /**
  * A variant that immediately starts collecting a download on first composition.
  *
  * Useful for screens that auto-start a download on open.
- *
- * Usage:
- * ```kotlin
- * val downloadState = rememberAutoDownloadState(
- *     fetcher = fetcher,
- *     url = fileUrl,
- *     destinationPath = savePath
- * )
- * ```
  *
  * @param fetcher The [ApexFetcher] instance.
  * @param url The URL to download immediately.
@@ -105,7 +130,8 @@ fun rememberAutoDownloadState(
   url: String,
   destinationPath: Path
 ): DownloadStateHolder {
-  val holder = remember(fetcher) { DownloadStateHolder(fetcher) }
+  val scope = rememberCoroutineScope()
+  val holder = remember(fetcher) { DownloadStateHolder(fetcher, scope) }
   LaunchedEffect(url, destinationPath) {
     holder.start(url, destinationPath)
   }

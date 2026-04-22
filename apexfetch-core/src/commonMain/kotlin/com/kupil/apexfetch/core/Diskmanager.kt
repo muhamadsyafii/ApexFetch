@@ -48,13 +48,16 @@ internal class DiskManager(
    * Opens the sink in append mode when [isResume] is true.
    *
    * @param startBytes Bytes already on disk — used as the baseline for progress calculation.
+   * @param onProgress Optional callback that receives the latest [currentBytes] written.
+   *                   Used by [DownloadExecutorImpl] to persist final downloadedBytes to DB.
    */
   suspend fun FlowCollector<DownloadState>.streamToDisk(
     channel: ByteReadChannel,
     destinationPath: Path,
     isResume: Boolean,
     startBytes: Long,
-    totalBytes: Long
+    totalBytes: Long,
+    onProgress: ((currentBytes: Long) -> Unit)? = null
   ) {
     val sink = if (isResume) {
       fileSystem.appendingSink(destinationPath)
@@ -71,6 +74,7 @@ internal class DiskManager(
           val bytes = packet.readByteArray()
           buffered.write(bytes)
           currentBytes += bytes.size
+          onProgress?.invoke(currentBytes)
           emit(DownloadState.Downloading(
             progress = calculateProgress(currentBytes, totalBytes),
             downloadedBytes = currentBytes,
