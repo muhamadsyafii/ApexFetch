@@ -1,8 +1,19 @@
+import com.vanniktech.maven.publish.SonatypeHost
+
 /*
- * Created by Muhamad Syafii
- * 21/4/2026 - muhamadsyafii4@gmail.com
- * Copyright (c) 2026.
- * All Rights Reserved
+ * Copyright 2026 Muhamad Syafii
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 plugins {
@@ -10,7 +21,50 @@ plugins {
   alias(libs.plugins.androidLibrary)
   alias(libs.plugins.composeMultiplatform)
   alias(libs.plugins.composeCompiler)
+  alias(libs.plugins.dokka)
+  id("com.vanniktech.maven.publish")
 }
+
+mavenPublishing {
+  publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+  signAllPublications()
+
+  configure(com.vanniktech.maven.publish.KotlinMultiplatform(javadocJar = com.vanniktech.maven.publish.JavadocJar.Empty()))
+
+  coordinates(
+    groupId    = ApexFetchConfig.GROUP,
+    artifactId = ApexFetchConfig.ARTIFACT_COMPOSE,
+    version    = ApexFetchConfig.VERSION,
+  )
+
+  pom {
+    name.set(ApexFetchConfig.LIBRARY_NAME)
+    description.set(ApexFetchConfig.LIBRARY_DESCRIPTION)
+    url.set(ApexFetchConfig.LIBRARY_URL)
+
+    licenses {
+      license {
+        name.set(ApexFetchConfig.LICENSE_NAME)
+        url.set(ApexFetchConfig.LICENSE_URL)
+      }
+    }
+
+    developers {
+      developer {
+        id.set(ApexFetchConfig.DEVELOPER_ID)
+        name.set(ApexFetchConfig.DEVELOPER_NAME)
+        email.set(ApexFetchConfig.DEVELOPER_EMAIL)
+      }
+    }
+
+    scm {
+      url.set(ApexFetchConfig.SCM_URL)
+      connection.set(ApexFetchConfig.SCM_CONNECTION)
+      developerConnection.set(ApexFetchConfig.SCM_DEV_CON)
+    }
+  }
+}
+
 
 kotlin {
   androidTarget {
@@ -28,12 +82,13 @@ kotlin {
   }
 }
 
+// ── Android ───────────────────────────────────────────────────────────────────
 android {
-  namespace = "com.kupil.apexfetch.compose"
-  compileSdk = 34
+  namespace  = "com.kupil.apexfetch.compose"
+  compileSdk = ApexFetchConfig.COMPILE_SDK
 
   defaultConfig {
-    minSdk = 21
+    minSdk = ApexFetchConfig.MIN_SDK
   }
 
   compileOptions {
