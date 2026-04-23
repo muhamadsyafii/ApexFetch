@@ -1,118 +1,136 @@
-# 🚀 ApexFetch
+# ApexFetch
 
 [![Maven Central](https://img.shields.io/maven-central/v/com.github.muhamadsyafii/apexfetch.svg)](https://search.maven.org/)
 [![JitPack](https://jitpack.io/v/muhamadsyafii/apexfetch.svg)](https://jitpack.io/#muhamadsyafii/apexfetch)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Platform](https://img.shields.io/badge/platform-Android%20%7C%20%7C%20JVM%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)](#)
+[![Platform](https://img.shields.io/badge/platform-Android%20%7C%20JVM%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)](#)
 
-**ApexFetch** is an Enterprise-grade Download Manager for **Kotlin Multiplatform (KMP)**. This library is designed to handle large-scale file downloads with built-in local database persistence, automatic resume capabilities, and modern UI support for both Jetpack Compose and legacy XML View Systems.
+**ApexFetch** is an enterprise-grade download manager for **Kotlin Multiplatform (KMP)**.
+It is designed to handle large-scale file downloads with built-in local database
+persistence, automatic resume capabilities, and modern UI support for **Android**
+(Jetpack Compose & XML View Systems) and **Desktop** (Windows & Linux).
 
 ---
 
-## 📺 Demo
+## Demo
+
 ![ApexFetch Demo](https://raw.githubusercontent.com/muhamadsyafii/apexfetch/main/assets/demo.gif)
-> *Check out the full video demonstration here: [YouTube Link]*
+
+> Full video demonstration: [YouTube Link]
 
 ---
 
-## 🏗️ Project Architecture
+## Project Architecture
 
 ApexFetch is divided into modular components for maximum flexibility:
 
-- **`apexfetch-core`**: The pure KMP logic core (Ktor, Okio, SQLDelight).
-- **`apexfetch-compose`**: UI Wrapper for Compose Multiplatform (`rememberApexDownload`).
-- **`apexfetch-android-xml`**: Extensions for Android XML View Systems (LiveData & ViewModel).
+- **`apexfetch-core`** — The pure KMP logic core (Ktor, Okio, SQLDelight).
+- **`apexfetch-compose`** — UI wrapper for Compose Multiplatform (`rememberApexDownload`).
+- **`apexfetch-android-xml`** — Extensions for Android XML View Systems (LiveData & ViewModel).
 
 ---
 
-## ✨ Key Features
-* **✅ Smart Resume**: Automatically resumes downloads from the last downloaded byte using HTTP Range headers.
-* **✅ Local Persistence**: Permanently stores download history and real-time states in a local SQLite database.
-* **✅ Multi-Platform**: Write once, run seamlessly on Android, Windows, Linux.
-* **✅ Lifecycle Aware**: Safely manages download scopes (specifically tailored for UI modules).
-* **✅ Disk-Efficient**: Writes streams directly to storage using Okio to prevent memory overhead and out-of-memory (OOM) crashes.
+## Features
+
+- **Smart Resume** — Automatically resumes downloads from the last downloaded byte using HTTP Range headers.
+- **Local Persistence** — Stores download history and real-time states in a local SQLite database.
+- **Multiplatform** — Write once, run on Android, Windows, and Linux.
+- **Lifecycle Aware** — Safely manages download scopes, specifically tailored for UI modules.
+- **Disk-Efficient** — Writes streams directly to storage via Okio to prevent memory overhead and OOM crashes.
 
 ---
 
-## 📋 Prerequisites
+## Prerequisites
 
-Before integrating the `apexfetch-core` library into your project, ensure your development environment meets the exact specifications defined in our build system:
+Ensure your development environment meets the following specifications:
 
-* **Kotlin**: Version `2.1.0`
-* **Android Gradle Plugin (AGP)**: Version `8.11.2`
-* **SQLDelight**: Version `2.0.1`
-* **Android SDK**: `minSdk 21` (Android 5.0 Lollipop) and `compileSdk 34` (Android 14).
-* **Java**: Source and Target compatibility are set to Java 8 (`VERSION_1_8`). *(Note: You will need JDK 17+ installed on your machine to run AGP 8.x).*
-* **Supported Targets**: Android and JVM (Desktop).
+| Requirement | Version |
+|---|---|
+| Kotlin | `2.1.0` |
+| Android Gradle Plugin (AGP) | `8.11.2` |
+| SQLDelight | `2.0.1` |
+| Android `minSdk` | `21` (Android 5.0 Lollipop) |
+| Android `compileSdk` | `34` (Android 14) |
+| Java Source/Target | Java 8 (`VERSION_1_8`) |
+| JDK (to run AGP 8.x) | `17+` |
+
+**Supported Targets:** Android, JVM (Desktop)
+
 ---
 
+## Installation
 
-## 📦 Installation
+### Step 1 — Add the Repository
 
-### 1. Add the Repository
+**Kotlin DSL (`settings.gradle.kts`)**
 
-#### **Kotlin DSL (`settings.gradle.kts`)**
 ```kotlin
 dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven { url = uri("[https://jitpack.io](https://jitpack.io)") }
+        maven { url = uri("https://jitpack.io") }
     }
 }
 ```
 
-#### **Groovy (`settings.gradle`)**
-```kotlin
+**Groovy (`settings.gradle`)**
+
+```groovy
 dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven { url = uri("[https://jitpack.io](https://jitpack.io)") }
+        maven { url "https://jitpack.io" }
     }
 }
 ```
 
-### 2. Add the Dependencies
-Add the required modules to your app/module level `build.gradle.kts` or `build.gradle`:
+### Step 2 — Add the Dependencies
 
+Add the required modules to your app or module-level `build.gradle.kts` or `build.gradle`:
 
-#### **Kotlin DSL (`settings.gradle.kts`)**
+**Kotlin DSL**
+
 ```kotlin
 dependencies {
     val apexVersion = "1.0.0"
-    
-    // Core Engine (Required)
+
+    // Core engine (required)
     implementation("com.github.muhamadsyafii:apexfetch-core:$apexVersion")
-    
+
     // For Jetpack Compose / Compose Multiplatform
     implementation("com.github.muhamadsyafii:apexfetch-compose:$apexVersion")
-    
+
     // For Android XML (LiveData support)
     implementation("com.github.muhamadsyafii:apexfetch-android-xml:$apexVersion")
 }
 ```
 
-#### **Groovy (`settings.gradle`)**
-```Groovy
+**Groovy**
+
+```groovy
 dependencies {
     def apexVersion = "1.0.0"
-    
+
     implementation "com.github.muhamadsyafii:apexfetch-core:$apexVersion"
     implementation "com.github.muhamadsyafii:apexfetch-compose:$apexVersion"
     implementation "com.github.muhamadsyafii:apexfetch-android-xml:$apexVersion"
 }
 ```
 
+---
 
-## 📦 Installation
+## Usage
+
 ### Initialization
 
 ```kotlin
 val fetcher = ApexFetcher(database = mySqlDelightDb)
 ```
 
-#### **A. Jetpack Compose**
+### A. Jetpack Compose
+
 ```kotlin
 val download = rememberApexDownload(fetcher, url, path)
 
@@ -125,16 +143,44 @@ if (download.state.value is DownloadState.Downloading) {
     LinearProgressIndicator(progress = progress / 100f)
 }
 ```
-#### **B. Android XML (LiveData)**
+
+### B. Android XML (LiveData)
+
 ```kotlin
 fetcher.downloadAsLiveData(url, path).observe(viewLifecycleOwner) { state ->
-    when(state) {
+    when (state) {
         is DownloadState.Downloading -> binding.progressBar.progress = state.progress
-        is DownloadState.Success -> binding.statusText.text = "Completed!"
-        // Handle other states like Paused, Error, etc.
+        is DownloadState.Success     -> binding.statusText.text = "Completed!"
+        // Handle other states: Paused, Error, etc.
     }
 }
 ```
 
+---
+
+## Contributing
+
+Contributions are welcome! Please read our [CONTRIBUTING.md](CONTRIBUTING.md) before submitting a pull request.
+
+By contributing to this project, you agree that your contributions will be licensed under the [Apache License 2.0](LICENSE).
+
+---
 
 
+## License
+
+```
+Copyright 2026 Muhamad Syafii
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    https://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+```
