@@ -11,12 +11,15 @@ persistence, automatic resume capabilities, and modern UI support for **Android*
 (Jetpack Compose & XML View Systems) and **Desktop** (Windows & Linux).
 
 ---
+<p align="center">
+<img src="https://github.com/user-attachments/assets/b65e28fe-98c7-4908-887e-73a149ef4221" width="280" alt="androidfromcmp" />
+<img src="https://github.com/user-attachments/assets/5100554e-0eba-4953-87e4-9e453cfe6896" width="280" alt="androidcompose"/>
+<img src="https://github.com/user-attachments/assets/631ca20a-2069-4432-92cb-c03022b583c5" width="280" alt="androidnativexml" />
+</p>
 
-## Demo
-
-![ApexFetch Demo](https://raw.githubusercontent.com/muhamadsyafii/apexfetch/main/assets/demo.gif)
-
-> Full video demonstration: [YouTube Link]
+<p align="center">
+<img src="https://github.com/user-attachments/assets/5cd41f78-a1a7-46a6-866b-84c490d831ae" width="550" alt="apexfetchdesktop" />
+</p>
 
 ---
 
