@@ -1,7 +1,6 @@
 # ApexFetch
 
-[![Maven Central](https://img.shields.io/maven-central/v/com.github.muhamadsyafii/apexfetch.svg)](https://search.maven.org/)
-[![JitPack](https://jitpack.io/v/muhamadsyafii/apexfetch.svg)](https://jitpack.io/#muhamadsyafii/apexfetch)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.muhamadsyafii/apexfetch-core.svg?label=Maven%20Central)](https://central.sonatype.com/namespace/io.github.muhamadsyafii)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Platform](https://img.shields.io/badge/platform-Android%20%7C%20JVM%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)](#)
 
