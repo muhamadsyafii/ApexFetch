@@ -72,7 +72,6 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven { url = uri("https://jitpack.io") }
     }
 }
 ```
@@ -84,7 +83,6 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven { url "https://jitpack.io" }
     }
 }
 ```
@@ -100,13 +98,13 @@ dependencies {
     val apexVersion = "1.0.0"
 
     // Core engine (required)
-    implementation("com.github.muhamadsyafii:apexfetch-core:$apexVersion")
+    implementation("io.github.muhamadsyafii:apexfetch-core:$apexVersion")
 
     // For Jetpack Compose / Compose Multiplatform
-    implementation("com.github.muhamadsyafii:apexfetch-compose:$apexVersion")
+    implementation("io.github.muhamadsyafii:apexfetch-compose:$apexVersion")
 
     // For Android XML (LiveData support)
-    implementation("com.github.muhamadsyafii:apexfetch-android-xml:$apexVersion")
+    implementation("io.github.muhamadsyafii:apexfetch-android-xml:$apexVersion")
 }
 ```
 
@@ -116,9 +114,14 @@ dependencies {
 dependencies {
     def apexVersion = "1.0.0"
 
-    implementation "com.github.muhamadsyafii:apexfetch-core:$apexVersion"
-    implementation "com.github.muhamadsyafii:apexfetch-compose:$apexVersion"
-    implementation "com.github.muhamadsyafii:apexfetch-android-xml:$apexVersion"
+    // Core engine (required)
+    implementation "io.github.muhamadsyafii:apexfetch-core:$apexVersion"
+    
+    // For Jetpack Compose / Compose Multiplatform
+    implementation "io.github.muhamadsyafii:apexfetch-compose:$apexVersion"
+    
+    // For Android XML (LiveData support)
+    implementation "io.github.muhamadsyafii:apexfetch-android-xml:$apexVersion"
 }
 ```
 
